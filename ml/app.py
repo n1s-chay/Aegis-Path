@@ -4,9 +4,20 @@ import numpy as np
 import joblib
 
 app = Flask(__name__)
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route("/safe-route", methods=["POST"])
+def safe_route():
+    data = request.get_json()
+    return jsonify({"status": "ok", "received": data})
+
 
 # Load accident model
-model = joblib.load("model/accident_model.pkl")
+
+
+
 
 # --------------------------
 # Helper functions
@@ -42,7 +53,6 @@ def compute_final_safety(accident, crowd_score, lighting_score, isolation_score)
     # weighted sum
     safety_score = (0.4 * (1 - crowd_score)) + (0.3 * lighting_score) + (0.3 * (1 - isolation_score))
     return round(safety_score, 2)
-
 # --------------------------
 # Routes
 # --------------------------

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis-Path - Women Safety App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .feature-card p {
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .path-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .safety-score {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .safety-high {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .safety-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .safety-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Aegis-Path</h1>
+        <p class="subtitle">Your Smart Safety Companion</p>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h3>📹 Smart Surveillance</h3>
+                <p>Real-time camera analysis for lighting and crowd density</p>
+            </div>
+            <div class="feature-card">
+                <h3>🚨 Incident Reports</h3>
+                <p>Integration with police reports and past incidents</p>
+            </div>
+            <div class="feature-card">
+                <h3>🗺️ Safe Pathfinding</h3>
+                <p>Intelligent route suggestions based on safety metrics</p>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <h2 style="margin-bottom: 20px; color: #333;">Find Your Safe Path</h2>
+            
+            <div class="input-group">
+                <label>Starting Location</label>
+                <div class="input-row">
+                    <input type="number" id="start-lat" placeholder="Latitude (e.g., 12.9716)" step="0.0001">
+                    <input type="number" id="start-lng" placeholder="Longitude (e.g., 77.5946)" step="0.0001">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Destination</label>
+                <div class="input-row">
+                    <input type="number" id="end-lat" placeholder="Latitude (e.g., 12.9352)" step="0.0001">
+                    <input type="number" id="end-lng" placeholder="Longitude (e.g., 77.6245)" step="0.0001">
+                </div>
+            </div>
+            
+            <button class="btn" onclick="findSafePath()">Find Safest Path</button>
+            <button class="btn" onclick="findAlternativePaths()" style="margin-top: 10px;">Show Alternative Paths</button>
+        </div>
+        
+        <div class="error" id="error-message"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #667eea; font-weight: 600;">Analyzing safety data...</p>
+        </div>
+        
+        <div class="results" id="results">
+            <h2 style="margin-bottom: 20px; color: #333;">Recommended Paths</h2>
+            <div id="paths-container"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('show', show);
+        }
+        
+        function showResults(show) {
+            document.getElementById('results').classList.toggle('show', show);
+        }
+        
+        function getSafetyClass(score) {
+            if (score >= 70) return 'safety-high';
+            if (score >= 40) return 'safety-medium';
+            return 'safety-low';
+        }
+        
+        function getSafetyLabel(score) {
+            if (score >= 70) return 'Safe';
+            if (score >= 40) return 'Moderate';
+            return 'Caution Advised';
+        }
+        
+        async function findSafePath() {
+            const startLat = parseFloat(document.getElementById('start-lat').value);
+            const startLng = parseFloat(document.getElementById('start-lng').value);
+            const endLat = parseFloat(document.getElementById('end-lat').value);
+            const endLng = parseFloat(document.getElementById('end-lng').value);
+            
+            if (isNaN(startLat) || isNaN(startLng) || isNaN(endLat) || isNaN(endLng)) {
+                showError('Please enter valid coordinates for both start and end locations');
+                return;
+            }
+            
+            showLoading(true);
+            showResults(false);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/path/safe`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        start: { lat: startLat, lng: startLng },
+                        end: { lat: endLat, lng: endLng }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPaths([data.path]);
+                } else {
+                    showError(data.error || 'Failed to find safe path');
+                }
+            } catch (error) {
+                showError('Error connecting to API. Make sure the server is running.');
+                console.error('Error:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        async function findAlternativePaths() {
+            const startLat = parseFloat(document.getElementById('start-lat').value);
+            const startLng = parseFloat(document.getElementById('start-lng').value);
+            const endLat = parseFloat(document.getElementById('end-lat').value);
+            const endLng = parseFloat(document.getElementById('end-lng').value);
+            
+            if (isNaN(startLat) || isNaN(startLng) || isNaN(endLat) || isNaN(endLng)) {
+                showError('Please enter valid coordinates for both start and end locations');
+                return;
+            }
+            
+            showLoading(true);
+            showResults(false);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/path/alternatives`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        start: { lat: startLat, lng: startLng },
+                        end: { lat: endLat, lng: endLng },
+                        num_alternatives: 3
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPaths(data.paths);
+                } else {
+                    showError(data.error || 'Failed to find alternative paths');
+                }
+            } catch (error) {
+                showError('Error connecting to API. Make sure the server is running.');
+                console.error('Error:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function displayPaths(paths) {
+            const container = document.getElementById('paths-container');
+            container.innerHTML = '';
+            
+            paths.forEach((path, index) => {
+                const pathCard = document.createElement('div');
+                pathCard.className = 'path-card';
+                
+                const safetyScore = path.safety_score.toFixed(1);
+                const safetyClass = getSafetyClass(safetyScore);
+                const safetyLabel = getSafetyLabel(safetyScore);
+                
+                pathCard.innerHTML = `
+                    <h3>Path ${index + 1} ${index === 0 ? '(Recommended)' : ''}</h3>
+                    <p><strong>Distance:</strong> ${path.distance_km.toFixed(2)} km</p>
+                    <p><strong>Safety Score:</strong> <span class="safety-score ${safetyClass}">${safetyScore}/100 - ${safetyLabel}</span></p>
+                    <p><strong>Waypoints:</strong> ${path.waypoints.length}</p>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        ${path.is_safe ? '✅ This path meets safety standards' : '⚠️ Use caution on this path'}
+                    </p>
+                `;
+                
+                container.appendChild(pathCard);
+            });
+            
+            showResults(true);
+        }
+    </script>
+</body>
+</html>

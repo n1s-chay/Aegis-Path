@@ -71,6 +71,11 @@ def safe_route():
 
     return jsonify({"routes": [safest_route]})
 
+@app.route('/api/incidents')
+def get_incidents_route():
+    incidents = get_all_incidents()
+    return jsonify(incidents)
+
 def get_routes_from_osrm(start, end):
     base_url = "http://router.project-osrm.org/route/v1/driving/"
     coords = f"{start['lng']},{start['lat']};{end['lng']},{end['lat']}"

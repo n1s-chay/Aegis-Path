@@ -9,30 +9,32 @@ function MapView() {
   const [error, setError] = useState("");
 
   const handleRoute = async () => {
-    setError("");
-    if (!startName || !endName) {
-      setError("Please enter both start and end locations.");
-      return;
-    }
-    try {
-      const res = await fetch("http://127.0.0.1:5000/api/route", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ start: startName, end: endName }),
-      });
-      const data = await res.json();
-      if (res.ok && data.route) {
-        setRoute(data.route);
-      } else {
-        setError(data.error || "Routing failed");
-        setRoute([]);
-      }
-    } catch (err) {
-      setError("Error fetching route");
-      console.error(err);
+  setError("");
+  if (!startName || !endName) {
+    setError("Please enter both start and end locations.");
+    return;
+  }
+  try {
+    const res = await fetch("http://127.0.0.1:5000/api/route", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ start: startName, end: endName }),
+    });
+    const data = await res.json();
+    if (res.ok && data.route) {
+      console.log("Route for Polyline:", data.route); // Add this line!
+      setRoute(data.route);
+    } else {
+      setError(data.error || "Routing failed");
       setRoute([]);
     }
-  };
+  } catch (err) {
+    setError("Error fetching route");
+    console.error(err);
+    setRoute([]);
+  }
+};
+
 
   const center = route.length > 0 ? route[0] : [12.9716, 77.5946]; // Default Bangalore center
 
@@ -58,22 +60,29 @@ function MapView() {
       </div>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <MapContainer center={center} zoom={13} style={{ height: "400px", width: "100%" }}>
-        <TileLayer
-          attribution="&copy; OpenStreetMap contributors"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {route.length > 0 && (
-          <>
-            <Marker position={route[0]}>
-              <Popup>Start</Popup>
-            </Marker>
-            <Marker position={route[route.length - 1]}>
-              <Popup>End</Popup>
-            </Marker>
-            <Polyline positions={route} color="blue" />
-          </>
-        )}
-      </MapContainer>
+  <TileLayer
+    attribution="&copy; OpenStreetMap contributors"
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  />
+
+  {route.length > 0 && (
+    <>
+      {/* Start Marker */}
+      <Marker position={route[0]}>
+        <Popup>Start</Popup>
+      </Marker>
+      
+      {/* End Marker */}
+      <Marker position={route[route.length - 1]}>
+        <Popup>End</Popup>
+      </Marker>
+
+      {/* Polyline for route */}
+      <Polyline positions={route} color="blue" />
+    </>
+  )}
+</MapContainer>
+
     </div>
   );
 }

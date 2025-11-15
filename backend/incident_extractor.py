@@ -1,16 +1,12 @@
 from openai import OpenAI
 import requests
 import sqlite3
-from dotenv import load_dotenv
 import os
 import json
-
-load_dotenv()  # Loads variables from .env
 
 openai_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=openai_key)
 
-"""
 def extract_locations_from_article(article_text):
     prompt = (
         "Extract and return a JSON list of location names mentioned in "
@@ -29,7 +25,6 @@ def extract_locations_from_article(article_text):
         print("Warning: Could not parse JSON from LLM response, using raw text instead.")
         locations = []
     return locations
-"""
 
 def extract_locations_from_article(article_text):
     # Mocked response for testing quota issues
@@ -43,6 +38,17 @@ def geocode_location(location_name):
     if results:
         return float(results[0]['lat']), float(results[0]['lon'])
     return None, None
+
+def geocode_place(place_name):
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {"q": f"{place_name}, Bangalore, Karnataka, India", "format":"json", "limit":1}
+    headers = {"User-Agent":"AegisPath-Geocoder/1.0"}
+    r = requests.get(url, params=params, headers=headers, timeout=8)
+    if r.status_code == 200 and r.json():
+        d = r.json()[0]
+        return {"lat": float(d["lat"]), "lng": float(d["lon"]), "display_name": d.get("display_name")}
+    return None
+
 
 def create_incidents_table():
     conn = sqlite3.connect('incidents.db')

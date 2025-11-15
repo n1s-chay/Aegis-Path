@@ -38,6 +38,18 @@ def validate_coord(coord):
         return True
     except (ValueError, TypeError):
         return False
+    
+def geocode_address(address):
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {"q": address, "format": "json", "limit": 1}
+    headers = {"User-Agent": "YourApp/1.0"}
+    r = requests.get(url, params=params, headers=headers)
+    data = r.json()
+    # Return (lat, lng) as float if found
+    if data:
+        return float(data[0]['lat']), float(data[0]['lon'])
+    else:
+        return None
 
 @app.route('/')
 def index():
@@ -71,36 +83,42 @@ def safe_route():
 
     return jsonify({"routes": [safest_route]})
 
+@app.route('/api/route', methods=['POST'])
+def get_route():
+    data = request.json
+    start_name = data['start']
+    end_name = data['end']
+    start_coords = geocode_address(start_name)
+    end_coords = geocode_address(end_name)
+    if not start_coords or not end_coords:
+        return jsonify({"error": "Location not found"}), 400
+    routes = get_routes_from_osrm(
+        {'lat': start_coords[0], 'lng': start_coords[1]},
+        {'lat': end_coords[0], 'lng': end_coords[1]})
+    if not routes:
+        return jsonify({"error": "No route found"}), 404
+    # Return only the first route's coordinates
+    return jsonify({"route": routes[0]["geometry"]["coordinates"]})
+
 @app.route('/api/incidents')
 def get_incidents_route():
     incidents = get_all_incidents()
     return jsonify(incidents)
 
 def get_routes_from_osrm(start, end):
-    base_url = "http://router.project-osrm.org/route/v1/driving/"
-    coords = f"{start['lng']},{start['lat']};{end['lng']},{end['lat']}"
-    params = {
-        "alternatives": "true",
-        "overview": "full",
-        "geometries": "geojson"
-    }
-    try:
-        url = base_url + coords
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
-        routes = data.get('routes', [])
-        result = []
-        for route in routes:
-            result.append({
-                "geometry": route["geometry"],
-                "duration": route["duration"],
-                "distance": route["distance"]
-            })
-        return result
-    except requests.RequestException as e:
-        app.logger.error(f"OSRM request failed: {e}")
-        return []
+    # existing code...
+    result = []
+    for route in routes:
+        coords_lnglat = route["geometry"]["coordinates"]  # list of [lng, lat]
+        coords_latlng = [[lat, lng] for lng, lat in coords_lnglat]  # convert for frontend
+        result.append({
+            "geometry": {
+                "coordinates": coords_latlng
+            },
+            "duration": route["duration"],
+            "distance": route["distance"]
+        })
+    return result
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -4,7 +4,7 @@ function Alerts() {
   const [incidents, setIncidents] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/incidents")
+    fetch("http://127.0.0.1:5000/api/incidents")
       .then(res => res.json())
       .then(data => setIncidents(data));
   }, []);

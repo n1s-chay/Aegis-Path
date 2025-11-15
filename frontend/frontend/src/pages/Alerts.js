@@ -76,7 +76,7 @@ export default function Alerts() {
           };
 
           try {
-            // Send location to backend (you'll need to implement this endpoint)
+            // Send location to backend
             const response = await fetch('/api/sos', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

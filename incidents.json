@@ -1,0 +1,42 @@
+[
+  {
+    "incident_id": "INC-20251101120000",
+    "location": {
+      "lat": 12.9716,
+      "lng": 77.5946
+    },
+    "incident_type": "theft",
+    "severity": 2,
+    "timestamp": "2025-11-01T12:00:00"
+  },
+  {
+    "incident_id": "INC-20251105093000",
+    "location": {
+      "lat": 12.9650,
+      "lng": 77.6000
+    },
+    "incident_type": "harassment",
+    "severity": 3,
+    "timestamp": "2025-11-05T09:30:00"
+  },
+  {
+    "incident_id": "INC-20251108154500",
+    "location": {
+      "lat": 12.9400,
+      "lng": 77.6200
+    },
+    "incident_type": "assault",
+    "severity": 5,
+    "timestamp": "2025-11-08T15:45:00"
+  },
+  {
+    "incident_id": "INC-20251110180000",
+    "location": {
+      "lat": 12.9500,
+      "lng": 77.6100
+    },
+    "incident_type": "theft",
+    "severity": 2,
+    "timestamp": "2025-11-10T18:00:00"
+  }
+]
